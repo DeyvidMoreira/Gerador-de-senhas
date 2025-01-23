@@ -1,4 +1,4 @@
-package com.example.pwdcripto.contants
+package com.example.pwdcripto.framework.contants
 
 object ConstantsDatabase {
 

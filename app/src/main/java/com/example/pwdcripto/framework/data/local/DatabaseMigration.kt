@@ -1,7 +1,7 @@
-package com.example.pwdcripto.data.local
+package com.example.pwdcripto.framework.data.local
 
 import androidx.room.migration.Migration
-import com.example.pwdcripto.contants.ConstantsDatabase
+import com.example.pwdcripto.framework.contants.ConstantsDatabase
 
 fun getDatabaseMigrations(): Array<Migration> {
     return arrayOf(

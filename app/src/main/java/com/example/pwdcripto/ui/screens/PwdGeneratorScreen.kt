@@ -3,18 +3,26 @@ package com.example.pwdcripto.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -39,7 +47,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pwdcripto.R
-import com.example.pwdcripto.contants.CharactersConstants
+import com.example.pwdcripto.framework.contants.CharactersConstants
+import com.example.pwdcripto.ui.components.PasswordBottomSheet
+import com.example.pwdcripto.ui.components.PasswordItem
+import com.example.pwdcripto.ui.components.SavePasswordDialog
 import com.example.pwdcripto.ui.viewModels.PwdGeneratorViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,12 +62,13 @@ fun PwdGeneratorScreen(
     viewModel: PwdGeneratorViewModel = koinViewModel()
 ) {
     val uiState by viewModel.state.collectAsState()
+
     var showDialog by remember { mutableStateOf(false) }
-    var tag by remember { mutableStateOf("") }
 
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -252,7 +264,12 @@ fun PwdGeneratorScreen(
             }
 
             Button(
-                onClick = { showBottomSheet = true },
+                onClick = {
+                    scope.launch {
+                        showBottomSheet = true
+                        sheetState.show()  // Garantir que o BottomSheet seja exibido
+                    }
+                },
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.padding(16.dp),
             ) {
@@ -265,67 +282,33 @@ fun PwdGeneratorScreen(
                 )
             }
 
-        }
+            // Dialog para salvar senha
+            if (showDialog) {
+                SavePasswordDialog(
+                    viewModel = viewModel,
+                    onDismiss = { showDialog = false }
+                )
+            }
 
-        // Dialog para salvar senha
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = {
-                    Text(text = "Save Password")
-                },
-                text = {
-                    Column {
-                        Text(text = "Enter a tag for the password:")
-                        TextField(
-                            value = tag,
-                            onValueChange = { tag = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text(text = "Tag") }
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(onClick = {
-                        viewModel.savePassword(tag)
-                        showDialog = false
-                        tag = ""
-                    }) {
-                        Text("Save")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("Cancel")
-                    }
-                }
-            )
-        }
-
-        // BottomSheet
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                },
-                sheetState = sheetState
-            ) {
-                // Sheet content
-                Button(onClick = {
-                    scope.launch(Dispatchers.IO) { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
+            // BottomSheet para mostrar as senhas salvas
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomSheet = false },
+                    sheetState = sheetState
+                ) {
+                    PasswordBottomSheet(
+                        viewModel = viewModel,
+                        onDelete = { password ->
+                            // Chama a função de deletar senha na ViewModel
+                            viewModel.deletePassword(password)
                         }
-                    }
-                }) {
-                    Text("Hide bottom sheet")
+                    )
                 }
             }
         }
-
     }
-
 }
+
 
 @Preview(showBackground = true)
 @Composable

@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.pwdcripto.di.appModule
+import com.example.pwdcripto.framework.di.appModule
 import com.example.pwdcripto.ui.screens.PwdGeneratorScreen
 import com.example.pwdcripto.ui.theme.PwdCriptoTheme
 import com.example.pwdcripto.ui.viewModels.PwdGeneratorViewModel

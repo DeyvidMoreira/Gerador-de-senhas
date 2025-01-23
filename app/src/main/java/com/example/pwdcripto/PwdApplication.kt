@@ -1,7 +1,7 @@
 package com.example.pwdcripto
 
 import android.app.Application
-import com.example.pwdcripto.di.appModule
+import com.example.pwdcripto.framework.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
