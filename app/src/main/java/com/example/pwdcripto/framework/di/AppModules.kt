@@ -3,7 +3,7 @@ package com.example.pwdcripto.framework.di
 import androidx.room.Room
 import com.example.pwdcripto.framework.contants.ConstantsDatabase
 import com.example.pwdcripto.framework.data.local.AppDatabase
-import com.example.pwdcripto.framework.data.local.getDatabaseMigrations
+import com.example.pwdcripto.framework.data.local.until.getDatabaseMigrations
 import com.example.pwdcripto.framework.data.local.repository.PasswordRepository
 import com.example.pwdcripto.ui.viewModels.PwdGeneratorViewModel
 import org.koin.android.ext.koin.androidContext
@@ -21,7 +21,7 @@ val appModule = module {
             AppDatabase::class.java,
             ConstantsDatabase.DATA_BASE_NAME
         )
-            .addMigrations(*getDatabaseMigrations())
+            .fallbackToDestructiveMigration()
             .build()
     }
 

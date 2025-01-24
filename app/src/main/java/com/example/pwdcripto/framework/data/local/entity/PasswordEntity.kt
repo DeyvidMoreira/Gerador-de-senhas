@@ -10,5 +10,6 @@ data class PasswordEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val tag: String = "",
-    val password: String = ""
+    val password: String = "",
+    val createdAt: Long = System.currentTimeMillis()
 )

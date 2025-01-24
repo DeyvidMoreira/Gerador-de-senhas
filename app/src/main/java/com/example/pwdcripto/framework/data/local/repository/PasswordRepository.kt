@@ -6,17 +6,21 @@ import kotlinx.coroutines.flow.Flow
 
 class PasswordRepository(private val passwordDao: PasswordDao) {
 
-    val allPasswords = passwordDao.getAllPasswords()
+    // Função para obter todas as senhas
+    val allPasswords: Flow<List<PasswordEntity>> = passwordDao.getAllPasswords()
 
-    suspend fun savePassword(password: PasswordEntity) {
-        passwordDao.savePassword(password)
+    // Função para obter senhas por tag
+    fun getPasswordsByTag(tag: String): Flow<List<PasswordEntity>> {
+        return passwordDao.getPasswordsByTag(tag)
     }
 
-    suspend fun updatePassword(password: PasswordEntity) {
-        passwordDao.updatePassword(password)
-    }
-    suspend fun deletePassword(password: PasswordEntity) {
-        passwordDao.deletePassword(password)
+    // Função para salvar uma senha
+    suspend fun savePassword(passwordEntity: PasswordEntity) {
+        passwordDao.savePassword(passwordEntity)
     }
 
+    // Função para deletar uma senha
+    suspend fun deletePassword(passwordEntity: PasswordEntity) {
+        passwordDao.deletePassword(passwordEntity)
+    }
 }

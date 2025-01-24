@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,6 +27,17 @@ class PwdGeneratorViewModel(application: Application, private val passwordReposi
     val state: StateFlow<PwdGeneratorState> = _state.asStateFlow()
 
     val passwords = passwordRepository.allPasswords.asLiveData()
+
+    private val _searchQuery = MutableStateFlow("")
+
+
+    val filteredPasswords = _searchQuery.flatMapLatest { query ->
+        if (query.isEmpty()) {
+            passwordRepository.allPasswords
+        } else {
+            passwordRepository.getPasswordsByTag(query)
+        }
+    }.asLiveData()
 
     fun updateOption(option: String, isChecked: Boolean) {
         _state.value = when (option) {
@@ -98,8 +110,10 @@ class PwdGeneratorViewModel(application: Application, private val passwordReposi
         }
     }
 
-
-
+    // Função para buscar senhas filtradas pela tag
+    fun getPasswordsByTag(query: String) {
+        _searchQuery.value = query
+    }
 
     // Função para deletar uma senha
     fun deletePassword(password: PasswordEntity) {
